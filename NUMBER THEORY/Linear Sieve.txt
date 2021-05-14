@@ -1,0 +1,97 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+//#define mod              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e18
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define mp               make_pair
+
+//template<class T>inline bool rd(T &x){int c=getchar();int sgn=1;while(~c&&c<'0'||c>'9'){if(c=='-')sgn=-1;c=getchar();}for(x=0;~c&&'0'<=c&&c<='9';c=getchar())x=x*10+c-'0'; x*=sgn; return ~c;}
+
+//const int dx[]={+0,+0,+1,-1,-1,+1,-1,+1};
+//const int dy[]={-1,+1,+0,+0,+1,+1,-1,-1};
+
+const int mx=1000000007;
+
+
+const int N=10000002;
+int lp[N];
+int pr[N];
+int cnt=0;
+
+
+void LinearSieve()
+{
+    for (int i=2; i<=N; ++i) {
+        if (lp[i] == 0) {
+            lp[i] = i;
+            pr[cnt++]=i;
+        }
+        for (int j=0; j<cnt && pr[j]<=lp[i] && i*pr[j]<=N; ++j)
+            lp[i * pr[j]] = pr[j];
+    }
+
+}
+
+void solve()
+{
+    int a,b;
+
+    cin>>a>>b;
+
+    set<int>s;
+
+    while(a>1 && lp[a]!=a)
+    {
+        s.insert(lp[a]);
+        a/=lp[a];
+    }
+
+    if(a>1)s.insert(a);
+
+    while(b>1 && lp[b]!=b)
+    {
+        s.insert(lp[b]);
+        b/=lp[b];
+    }
+
+    if(b>1)s.insert(b);
+
+    cout<<s.size()<<endl;
+
+}
+
+int main()
+{
+
+    fast;
+
+    LinearSieve();
+
+    int t;
+
+    cin>>t;
+
+    while(t--)
+        solve();
+
+
+
+
+    return 0;
+}

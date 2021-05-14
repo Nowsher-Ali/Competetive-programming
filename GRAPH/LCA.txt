@@ -1,0 +1,131 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+//#define mod              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e18
+#define mem(a, b)        memset(a, b, sizeof(a))
+
+const int maxN = 20;
+const int mx=200003;
+vector<int> ar[mx];
+int level[mx], table[mx][maxN];
+bool vis[mx];
+
+
+void dfs(int node, int lvl, int par)
+{
+    level[node] = lvl;
+    table[node][0] = par;
+    vis[node]=1;
+    for(int i=0; i<ar[node].size(); i++)
+    {
+        if(!vis[ar[node][i]])
+        {
+            dfs(ar[node][i],lvl+1,node);
+        }
+    }
+}
+
+
+void LCA(int n)
+{
+    for(int i=0; i<mx; i++)
+    {
+        for(int j=0; j<maxN; j++)
+            table[i][j]=-1;
+    }
+
+    dfs(1, 0, -1);
+
+    for(int i=1; i<=maxN; i++)
+    {
+        for(int j=1; j<=n; j++)
+        {
+            if(table[j][i-1] != -1)
+            {
+                int par = table[j][i-1];
+                table[j][i] = table[par][i-1];
+            }
+        }
+
+    }
+}
+
+int query(int a, int b)
+{
+    if(level[b] < level[a])
+        swap(a, b);
+
+    int d = level[b] - level[a];
+
+    while(d > 0)
+    {
+        int i = log2(d);
+        b = table[b][i];
+        d -= 1 << i;
+    }
+
+    if(a == b)
+        return a;
+
+    for(int i=maxN-1; i>=0; i--)
+    {
+        if(table[a][i] != -1 && (table[a][i] != table[b][i]))
+        {
+            a = table[a][i], b = table[b][i];
+        }
+    }
+
+
+    return table[a][0];
+}
+void solve()
+{
+    int n,q;
+
+    cin>>n>>q;
+
+    for(int i=2; i<=n; i++)
+    {
+        int x;
+        cin>>x;
+        ar[i].pb(x);
+        ar[x].pb(i);
+    }
+
+    LCA(n);
+
+    while(q--)
+    {
+        int a,b;
+        cin>>a>>b;
+        cout<<query(a,b)<<endl;
+    }
+
+
+}
+
+int main()
+{
+
+    fast;
+
+    solve();
+
+    return 0;
+}

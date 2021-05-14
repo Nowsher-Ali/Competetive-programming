@@ -1,0 +1,81 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define LL long long int
+#define L long int
+#define IM INT_MAX
+#define Im INT_MIN
+#define fast ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read  freopen("input.txt", "r", stdin)
+#define write freopen("output.txt", "w", stdout)
+#define pb(x) push_back(x)
+#define all(v) sort(v.begin(),v.end())
+#define For(j,n) for(int i=j;i<n;i++)
+
+#define mx 100
+
+bool prime[105];
+
+bool vis[mx];
+
+void sieve() {
+    int x=sqrt((int)mx);
+    for(int i=3; i<=x; i+=2) {
+        if(vis[i]==0) {
+            for(int j=i*i; j<mx; j+=2*i)
+                vis[j]=1;
+        }
+    }
+    //prime.pb(2);
+    prime[2]=true;
+    for(int i=3; i<mx; i+=2)
+        if(vis[i]==0)
+            //prime.pb(i);
+            prime[i]=true;
+}
+
+int main(){
+
+fast;
+
+int t;
+
+cin>>t;
+
+for(int i=0;i<=100;i++){
+    prime[i]=false;
+    vis[i]=0;
+}
+
+sieve();
+
+int ts=1;
+
+while(t--){
+    int n;
+    cin>>n;
+    vector<pair<int,int> >ans;
+
+    for(int i=2;i<=n;i++){
+        if(prime[i]){
+            int x=n;
+            int cnt=0;
+            while(x){
+                cnt+=(x/i);
+                x/=i;
+            }
+            ans.push_back(make_pair(i,cnt));
+        }
+    }
+
+    cout<<"Case "<<ts<<": "<<n<<" = ";
+    ts++;
+    for(int i=0;i<ans.size();i++){
+        cout<<ans[i].first<<" ("<<ans[i].second<<")";
+        if(i!=ans.size()-1)cout<<" * ";
+        else cout<<endl;
+    }
+}
+
+return 0;
+}

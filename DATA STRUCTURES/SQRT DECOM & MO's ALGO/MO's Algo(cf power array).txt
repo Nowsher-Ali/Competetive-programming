@@ -1,0 +1,135 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+//#define mod              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e18
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define BLOCK            555
+#define endl             "\n"
+const int sz = 200005;
+
+struct query
+{
+    int l;
+    int r;
+    int ind;
+};
+
+query Q[200001];
+int arr[sz];
+ll ans[sz];
+int f[1000005];
+ll r=0;
+
+bool cmp(query a, query b)
+{
+    if(a.l / BLOCK != b.l/BLOCK)
+        return a.l/BLOCK < b.l/BLOCK;
+
+    return a.r < b.r;
+}
+
+void add(int pos)
+{
+    ll pf=f[arr[pos]];
+    f[arr[pos]]++;
+    ll cf=f[arr[pos]];
+    ll val=arr[pos];
+    r-=(pf*pf*val);
+    r+=(cf*cf*val);
+}
+
+void Remove(int pos)
+{
+    ll pf=f[arr[pos]];
+    f[arr[pos]]--;
+    ll cf=f[arr[pos]];
+    ll val=arr[pos];
+    r-=(pf*pf*val);
+    r+=(cf*cf*val);
+}
+
+void solve()
+{
+    int n,q;
+
+    cin>>n>>q;
+
+    for(int i=0; i<n; i++)
+        cin>>arr[i];
+
+
+    for(int i=0; i<q; i++)
+    {
+        cin>>Q[i].l>>Q[i].r;
+        Q[i].l--;
+        Q[i].r--;
+        Q[i].ind=i;
+    }
+
+    sort(Q, Q+q, cmp);
+
+    int ml=0,mr=-1;
+
+    int ML = 0, MR = -1;
+    for(int i=0; i<q; i++)
+    {
+        int L = Q[i].l;
+        int R = Q[i].r;
+        while(ML > L)
+        {
+            ML--;
+            add(ML);
+        }
+
+
+        while(MR < R)
+        {
+            MR++;
+            add(MR);
+        }
+
+        while(ML < L)
+        {
+            Remove(ML);
+            ML++;
+        }
+
+        while(MR > R)
+        {
+            Remove(MR);
+            MR--;
+        }
+
+
+        ans[Q[i].ind] = r;
+    }
+
+    for(int i=0; i<q; i++)
+        cout<<ans[i]<<endl;
+}
+
+int main()
+{
+
+    fast;
+
+    solve();
+
+    return 0;
+}

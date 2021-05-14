@@ -1,0 +1,128 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+//#define mod              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e18
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+
+int cs=1;
+vector<int>g[105];
+bool vis[105],vis1[105];
+ll dis1[105],dis2[105];
+
+void bfs1(int node)
+{
+    queue<int>q;
+    q.push(node);
+    dis1[node]=0;
+    vis[node]=1;
+    while(!q.empty())
+    {
+        int x=q.front();
+        q.pop();
+        //vis[x]=1;
+        for(int i=0; i<g[x].size(); i++)
+        {
+            if(vis[g[x][i]]==0)
+            {
+                q.push(g[x][i]);
+                dis1[g[x][i]]=dis1[x]+1;
+                vis[g[x][i]]=1;
+            }
+        }
+    }
+}
+
+void bfs2(int node)
+{
+    queue<int>q;
+    q.push(node);
+    dis2[node]=0;
+    vis1[node]=1;
+    while(!q.empty())
+    {
+        int x=q.front();
+        q.pop();
+        //vis1[x]=1;
+        for(int i=0; i<g[x].size(); i++)
+        {
+            if(vis1[g[x][i]]==0)
+            {
+                q.push(g[x][i]);
+                dis2[g[x][i]]=dis2[x]+1;
+                vis1[g[x][i]]=1;
+            }
+        }
+    }
+}
+
+void init()
+{
+    for(int i=0; i<105; i++)
+        g[i].clear();
+    mem(vis,0);
+    mem(vis1,0);
+    mem(dis1,0);
+    mem(dis2,0);
+}
+
+void solve()
+{
+    init();
+    int n,r;
+
+    cin>>n>>r;
+
+    for(int i=0; i<r; i++)
+    {
+        int x,y;
+        cin>>x>>y;
+        g[x].pb(y);
+        g[y].pb(x);
+    }
+
+    int st,en;
+
+    cin>>st>>en;
+
+    bfs1(st);
+    bfs2(en);
+    ll ans=0;
+    for(int i=0;i<n;i++)
+        ans=max(ans,dis1[i]+dis2[i]);
+
+    cout<<"Case "<<cs++<<": ";
+    cout<<ans<<endl;
+
+}
+
+int main()
+{
+
+    fast;
+
+    int t;
+
+    cin>>t;
+
+    while(t--)
+        solve();
+
+    return 0;
+}

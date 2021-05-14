@@ -1,0 +1,90 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+//#define mod              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e18
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+
+const int BLK = 400;
+const int sz = 100005;
+
+int sq;
+int arr[sz], f[BLK];
+
+int getMin(int l, int r)
+{
+    int LB=l/sq;
+    int RB=r/sq;
+
+    int mn=IM;
+
+    if(LB==RB)
+    {
+        for(int i=l;i<=r;i++)
+            mn=min(mn, arr[i]);
+    }
+    else
+    {
+        for(int i=l;i<sq*(LB+1);i++)
+            mn=min(mn, arr[i]);
+        for(int i=LB+1;i<RB;i++)
+            mn=min(mn, f[i]);
+        for(int i=sq*RB;i<=r;i++)
+            mn=min(mn, arr[i]);
+    }
+    return mn;
+}
+
+void solve()
+{
+    int n,q;
+
+    cin>>n;
+    sq=sqrt(n);
+    int bInd=-1;
+    for(int i=0;i<n;i++)
+        f[i]=IM;
+
+    int cnt=0,mn=IM;
+    for(int i=0;i<n;i++)
+    {
+        cin>>arr[i];
+        if(i%sq==0)
+            bInd++;
+        f[bInd]=min(arr[i], f[bInd]);
+    }
+    cin>>q;
+
+    for(int i=0;i<q;i++)
+    {
+        int x,y;
+        cin>>x>>y;
+        cout<<getMin(x,y)<<endl;
+    }
+}
+
+int main()
+{
+
+    fast;
+
+    solve();
+
+    return 0;
+}

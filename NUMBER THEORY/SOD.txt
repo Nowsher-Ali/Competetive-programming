@@ -1,0 +1,41 @@
+const int M=1e8+1;
+vector<ll>prime;
+bitset<M>vis;
+
+void sieve(int n) {
+    for (int i = 3; i * i < n; i += 2) {
+        if (!vis[i]) {
+            for (int j = i * i; j <= n; j +=(2*i)) {
+                vis[j]=1;
+            }
+        }
+    }
+    prime.push_back(2);
+    for(int i=3; i<M; i+=2) {
+        if(!vis[i])
+            prime.pb(i);
+    }
+}
+
+ll SOD(ll n) {
+    ll root=sqrt(n);
+    ll ans=1;
+    int sz=prime.size();
+    for(int i=0; i<sz && prime[i]<=root; i++) {
+        ll curr_sum = 1;
+        ll curr_term = 1;
+        while (n%prime[i] == 0) {
+
+            n/=prime[i];
+
+            curr_term *= prime[i];
+            curr_sum += curr_term;
+        }
+        root=sqrt(n);
+        ans*= curr_sum;
+    }
+    if(n>1){
+        ans*=(n+1);
+    }
+    return ans;
+}

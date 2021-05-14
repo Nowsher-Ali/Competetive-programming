@@ -1,0 +1,137 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+//#define mod              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e18
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+
+int cs=1;
+
+char g[15][15],vis[15][15],dis[15][15];
+
+const int dx[]={+1,-1,+0,+0};
+const int dy[]={+0,+0,+1,-1};
+
+bool isvalid(int x,int y, int n)
+{
+    if((x>=1 && x<=n) && (y>=1 && y<=n))
+        return true;
+    return false;
+}
+
+void bfs(int stx,int sty,int tx,int ty,int n)
+{
+    queue<pair<int,int> >q;
+
+    q.push({stx,sty});
+
+    dis[stx][sty]=0;
+    while(!q.empty())
+    {
+        int cx=q.front().ff;
+        int cy=q.front().ss;
+        vis[cx][cy]=1;
+        //cout<<cx<<" "<<cy<<endl;
+        q.pop();
+        for(int i=0;i<4;i++)
+        {
+            if(isvalid(cx+dx[i],cy+dy[i],n) && vis[cx+dx[i]][cy+dy[i]]==0 && g[cx+dx[i]][cy+dy[i]]!='#')
+            {
+                if(cx+dx[i]==tx && cy+dy[i]==ty)
+                {
+                    dis[cx+dx[i]][cy+dy[i]]=dis[cx][cy]+1;;
+                    return;
+                }
+                else if(g[cx+dx[i]][cy+dy[i]]=='.')
+                {
+                    dis[cx+dx[i]][cy+dy[i]]=dis[cx][cy]+1;;
+                    q.push({cx+dx[i], cy+dy[i]});
+                }
+            }
+        }
+    }
+}
+
+void solve()
+{
+    int n;
+
+    cin>>n;
+
+    int stx,sty;
+    int k=1;
+
+    vector<pair<char,pair<int,int> > >v;
+    for(int i=1;i<=n;i++)
+    {
+        for(int j=1;j<=n;j++)
+        {
+            cin>>g[i][j];
+            if(g[i][j]=='A')
+            {
+                stx=i;
+                sty=j;
+            }
+            else if(g[i][j]>='B' && g[i][j]<='Z')
+            {
+                k++;
+                v.pb({g[i][j],{i,j}});
+            }
+        }
+    }
+
+    all(v);
+
+    int ans=0;
+    cout<<"Case "<<cs++<<": ";
+    for(int i=0;i<v.size();i++)
+    {
+        int tx=v[i].ss.ff;
+        int ty=v[i].ss.ss;
+        mem(dis,0);
+        mem(vis,0);
+        bfs(stx,sty,tx,ty,n);
+        if(dis[tx][ty]==0)
+        {
+            cout<<"Impossible"<<endl;
+            return;
+        }
+        ans+=dis[tx][ty];
+        g[stx][sty]='.';
+        stx=tx;
+        sty=ty;
+    }
+
+    cout<<ans<<endl;
+}
+
+int main()
+{
+
+    fast;
+
+    int t;
+
+    cin>>t;
+
+    while(t--)
+        solve();
+
+    return 0;
+}

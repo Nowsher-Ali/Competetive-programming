@@ -1,0 +1,16 @@
+#define mx 100005
+
+vector<int> g[mx];
+bool vis[mx];
+
+
+void dfs(int node)
+{
+    vis[node]=1;
+    cout<<node<<" ";
+    for(int i=0;i<g[node].size();i++)
+    {
+        if(!vis[g[node][i]])
+            dfs(node);
+    }
+}
