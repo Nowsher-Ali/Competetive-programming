@@ -1,0 +1,189 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e12
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+#define pi               2*acos(0.0)
+
+const int ALPHABET_SIZE = 26;
+
+// trie node
+struct TrieNode
+{
+    struct TrieNode* children[ALPHABET_SIZE];
+    bool isEndOfWord;
+};
+
+// Returns new trie node (initialized to NULLs)
+struct TrieNode* getNode(void)
+{
+    struct TrieNode* pNode = new TrieNode;
+
+    pNode->isEndOfWord = false;
+
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        pNode->children[i] = NULL;
+
+    return pNode;
+}
+
+// If not present, inserts key into trie
+// If the key is prefix of trie node, just
+// marks leaf node
+void Insert(struct TrieNode* root, string key)
+{
+    struct TrieNode* tempRoot  = root;
+
+    for (int i = 0; i < key.length(); i++)
+    {
+        int index = key[i] - 'a';
+        if (!tempRoot->children[index])
+            tempRoot->children[index] = getNode();
+
+        tempRoot = tempRoot->children[index];
+    }
+
+    // mark last node as leaf
+    tempRoot->isEndOfWord = true;
+}
+
+// Returns true if key presents in trie, else
+// false
+bool Search(struct TrieNode* root, string key)
+{
+    struct TrieNode* tempRoot = root;
+
+    for (int i = 0; i < key.length(); i++)
+    {
+        int index = key[i] - 'a';
+        if (!tempRoot->children[index])
+            return false;
+
+        tempRoot = tempRoot->children[index];
+    }
+
+    return (tempRoot != NULL && tempRoot->isEndOfWord);
+}
+
+// Returns true if root has no children, else false
+bool isEmpty(TrieNode* root)
+{
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        if (root->children[i])
+            return false;
+    return true;
+}
+
+// Recursive function to delete a key from given Trie
+TrieNode* Remove(TrieNode* root, string key, int depth = 0)
+{
+    // If tree is empty
+    if (!root)
+        return NULL;
+
+    // If last character of key is being processed
+    if (depth == key.size())
+    {
+
+        // This node is no more end of word after
+        // removal of given key
+        if (root->isEndOfWord)
+            root->isEndOfWord = false;
+
+        // If given is not prefix of any other word
+        if (isEmpty(root))
+        {
+            delete (root);
+            root = NULL;
+        }
+
+        return root;
+    }
+
+    // If not last character, recur for the child
+    // obtained using ASCII value
+    int index = key[depth] - 'a';
+    root->children[index] =
+        Remove(root->children[index], key, depth + 1);
+
+    // If root does not have any child (its only child got
+    // deleted), and it is not end of another word.
+    if (isEmpty(root) && root->isEndOfWord == false)
+    {
+        delete (root);
+        root = NULL;
+    }
+
+    return root;
+}
+
+void solve()
+{
+    int n;
+
+    cin>>n;
+    struct TrieNode* root = getNode();
+
+    for(int i=0;i<n;i++)
+    {
+        string c;
+        cin>>c;
+        Insert(root, c);
+    }
+
+    int q;
+
+    cin>>q;
+
+    while(q--)
+    {
+        int code;
+        cin>>code;
+        string c;
+        cin>>c;
+
+        if(code==1)
+        {
+            if(Search(root, c))
+                cout<<"Found"<<endl;
+            else
+                cout<<"Not found"<<endl;
+        }
+        else
+        {
+            Remove(root, c);
+        }
+    }
+
+}
+
+int main()
+{
+
+    fast;
+
+    int t=1;
+
+    //cin>>t;
+
+    while(t--)
+        solve();
+}
+

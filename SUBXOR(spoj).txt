@@ -1,0 +1,148 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e12
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+#define pi               2*acos(0.0)
+
+struct TrieNode
+{
+    struct TrieNode* children[2];
+    int lc;
+    int rc;
+};
+
+struct TrieNode* getNode(void)
+{
+    struct TrieNode* pNode = new TrieNode;
+    pNode->lc = 0;
+    pNode->rc = 0;
+    for (int i = 0; i < 2; i++)
+        pNode->children[i] = NULL;
+    return pNode;
+}
+
+void Insert(struct TrieNode* root, int n)
+{
+    struct TrieNode* tempRoot  = root;
+    for (int i = 20; i>=0; i--)
+    {
+        bool bit=n&(1<<i);
+        if(bit)
+            tempRoot->rc++;
+        else
+            tempRoot->lc++;
+        if (!tempRoot->children[bit])
+            tempRoot->children[bit] = getNode();
+        tempRoot = tempRoot->children[bit];
+    }
+}
+
+int query(struct TrieNode* root, int n, int k)
+{
+    struct TrieNode* tempRoot = root;
+    int ans=0;
+
+    if(root==NULL)
+        return ans;
+
+    for (int i=20; i>=0; i--)
+    {
+        bool bit_n = n&(1<<i);
+        bool bit_k = k&(1<<i);
+
+        if(bit_k)
+        {
+            if(bit_n)
+            {
+                ans+=tempRoot->rc;
+                if(tempRoot->children[!bit_n])
+                    tempRoot=tempRoot->children[!bit_n];
+                else
+                    return ans;
+            }
+            else
+            {
+                ans+=tempRoot->lc;
+                if(tempRoot->children[!bit_n])
+                    tempRoot=tempRoot->children[!bit_n];
+                else
+                    return ans;
+            }
+        }
+        else
+        {
+            if(bit_n)
+            {
+                if(tempRoot->children[bit_n])
+                    tempRoot=tempRoot->children[bit_n];
+                else
+                    return ans;
+            }
+            else
+            {
+                if(tempRoot->children[bit_n])
+                    tempRoot=tempRoot->children[bit_n];
+                else
+                    return ans;
+            }
+        }
+    }
+    return ans;
+}
+
+void solve()
+{
+    struct TrieNode* root = getNode();
+    Insert(root, 0);
+
+    int n,k;
+
+    cin>>n>>k;
+
+    int p=0,q=0;
+    ll ans=0;
+
+    for(int i=0; i<n; i++)
+    {
+        int x;
+        cin>>x;
+        p=(q^x);
+        ans+=(ll)query(root, p, k);
+        Insert(root, p);
+        q=p;
+    }
+
+    cout<<ans<<endl;
+
+}
+
+int main()
+{
+
+    fast;
+
+    int t;
+
+    cin>>t;
+
+    while(t--)
+        solve();
+}

@@ -1,0 +1,90 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e18
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+#define pi               2*acos(0.0)
+
+int arr[100005];
+int a[100005],n,ans=0;
+
+void f(int l, int h)
+{
+    int mid=(l+h)/2;
+
+    if(l>=h)
+        return;
+
+    f(l,mid);
+    f(mid+1,h);
+
+    int i=l,j=mid+1;
+    int k=l;
+    while(i<=mid && j<=h)
+    {
+        if(arr[i]>arr[j])
+        {
+            a[k++]=arr[j];
+            ans+=(mid-i+1);
+            j++;
+        }
+        else
+        {
+            a[k++]=arr[i];
+            i++;
+        }
+    }
+
+    while(i<=mid)
+        a[k++]=arr[i++];
+
+    while(j<=h)
+        a[k++]=arr[j++];
+    for(i=l;i<=h;i++)
+        arr[i]=a[i];
+}
+
+void solve()
+{
+    cin>>n;
+
+    for(int i=1;i<=n;i++)
+    {
+        cin>>arr[i];
+        a[i]=arr[i];
+    }
+
+    f(1,n);
+
+    cout<<ans<<endl;
+}
+
+
+int main()
+{
+
+    fast;
+
+    solve();
+
+    return 0;
+}
+
+
