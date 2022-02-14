@@ -1,0 +1,116 @@
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e9
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+#define pi               2*acos(0.0)
+ 
+const int N = 1e5 + 3;
+ 
+ 
+static const int B = 64;
+struct trieNode
+{
+    trieNode * nxt[2];
+    int sz;
+    node()
+    {
+        nxt[0] = nxt[1] = NULL;
+        sz = 0;
+    }
+};
+ 
+trieNode *root;
+void Insert(ll val)
+{
+    trieNode* cur = root;
+    cur -> sz++;
+    for (int i = B - 1; i >= 0; i--)
+    {
+        int b = val >> i & 1;
+        if (cur -> nxt[b] == NULL) cur -> nxt[b] = new trieNode();
+        cur = cur -> nxt[b];
+        cur -> sz++;
+    }
+}
+ 
+ll get_max(ll x)
+{
+    trieNode* cur = root;
+    ll ans = 0;
+    for (int i = B - 1; i >= 0; i--)
+    {
+        int k = x >> i & 1;
+        if (cur -> nxt[!k]) cur = cur -> nxt[!k], ans <<= 1, ans++;
+        else cur = cur -> nxt[k], ans <<= 1;
+    }
+    return ans;
+}
+ 
+void del(trieNode* cur)
+{
+    for (int i = 0; i < 2; i++) if (cur -> nxt[i]) del(cur -> nxt[i]);
+    delete(cur);
+}
+ 
+void solve()
+{
+    root = new trieNode();
+    Insert(0);
+ 
+    int n;
+ 
+    cin>>n;
+ 
+    ll pre=0, suff=0;
+ 
+    ll arr[n+2], p[n+2];
+ 
+    for(int i=1;i<=n;i++)
+    {
+        cin>>arr[i];
+        pre ^= arr[i];
+        p[i] = pre;
+        Insert(pre);
+    }
+ 
+    ll ans=get_max(suff);
+ 
+    for(int i=n;i>=1;i--)
+    {
+        suff ^= arr[i];
+        ans=max(ans, get_max(suff));
+    }
+ 
+    cout<<ans<<endl;
+}
+ 
+int main()
+{
+ 
+    fast;
+ 
+    int t=1;
+ 
+    //cin>>t;
+ 
+    while(t--)
+        solve();
+}

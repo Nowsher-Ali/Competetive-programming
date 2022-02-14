@@ -1,0 +1,134 @@
+#include<bits/stdc++.h>
+using namespace std;
+ 
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e9
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+#define pi               2*acos(0.0)
+ 
+const int N = 2e5 + 9;
+ 
+struct Trie
+{
+    static const int B = 31;
+    struct node
+    {
+        node* nxt[2];
+        int cnt;
+        int sz;
+        node()
+        {
+            nxt[0] = nxt[1] = NULL;
+            cnt = 0;
+            sz = 0;
+        }
+    }*root;
+    Trie()
+    {
+        root = new node();
+    }
+    void insert(int val)
+    {
+        node* cur = root;
+        cur -> sz++;
+        for (int i = B - 1; i >= 0; i--)
+        {
+            int b = val >> i & 1;
+            if (cur -> nxt[b] == NULL) cur -> nxt[b] = new node();
+            cur = cur -> nxt[b];
+            cur->cnt++;
+            cur -> sz++;
+        }
+    }
+ 
+    void Delete(int val)
+    {
+        node* cur = root;
+        cur -> sz++;
+        for (int i = B - 1; i >= 0; i--)
+        {
+            int b = val >> i & 1;
+            cur = cur -> nxt[b];
+            cur->cnt--;
+            cur -> sz++;
+        }
+    }
+ 
+    int get_max(int x)   // returns maximum of val ^ x
+    {
+        node* cur = root;
+        int ans = 0;
+        for (int i = B - 1; i >= 0; i--)
+        {
+            int k = x >> i & 1;
+            if (cur -> nxt[!k] && cur->nxt[!k]->cnt) cur = cur -> nxt[!k], ans <<= 1, ans++;
+            else cur = cur -> nxt[k], ans <<= 1;
+        }
+        return ans;
+    }
+    int get_min(int x)   // returns minimum of val ^ x
+    {
+        node* cur = root;
+        int ans = 0;
+        for (int i = B - 1; i >= 0; i--)
+        {
+            int k = x >> i & 1;
+            if (cur -> nxt[k]) cur = cur -> nxt[k], ans <<= 1;
+            else cur = cur -> nxt[!k], ans <<= 1, ans++;
+        }
+        return ans;
+    }
+} t;
+ 
+void solve()
+{
+    int n;
+    cin >> n;
+    t.insert(0);
+ 
+    for(int i=0;i<n;i++)
+    {
+        char c;
+        cin>>c;
+        int x;
+        cin>>x;
+ 
+        if(c=='+')
+            t.insert(x);
+        else if(c=='-')
+            t.Delete(x);
+        else
+            cout<<t.get_max(x)<<endl;
+    }
+}
+ 
+ 
+ 
+int main()
+{
+ 
+    fast;
+ 
+    int t=1;
+ 
+    //cin>>t;
+ 
+    while(t--)
+        solve();
+}

@@ -1,0 +1,138 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e9
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+#define pi               2*acos(0.0)
+
+const int N = 1e5 + 3;
+
+
+static const int B = 64;
+struct trieNode
+{
+    trieNode * nxt[2];
+    int sz;
+    node()
+    {
+        nxt[0] = nxt[1] = NULL;
+        sz = 0;
+    }
+};
+
+trieNode *root;
+void Insert(ll val)
+{
+    trieNode* cur = root;
+    cur -> sz++;
+    for (int i = B - 1; i >= 0; i--)
+    {
+        int b = val >> i & 1;
+        if (cur -> nxt[b] == NULL) cur -> nxt[b] = new trieNode();
+        cur = cur -> nxt[b];
+        cur -> sz++;
+    }
+}
+
+ll query(ll x, ll k)
+{
+    trieNode* cur = root;
+    ll ans = 0;
+    for (int i = B - 1; i >= 0; i--)
+    {
+        if (cur == NULL) break;
+        int b1 = x >> i & 1, b2 = k >> i & 1;
+        if (b2 == 1)
+        {
+            if (cur -> nxt[b1]) ans += cur -> nxt[b1] -> sz;
+            cur = cur -> nxt[!b1];
+        }
+        else cur = cur -> nxt[b1];
+    }
+    return ans;
+}
+
+void del(trieNode* cur)
+{
+    for (int i = 0; i < 2; i++) if (cur -> nxt[i]) del(cur -> nxt[i]);
+    delete(cur);
+}
+
+void Delete(ll val)
+{
+    trieNode* cur = root;
+    cur->sz--;
+
+    for (int i = B - 1; i >= 0; i--)
+    {
+        int b = val >> i & 1;
+        cur = cur -> nxt[b];
+        cur->sz--;
+    }
+}
+
+void solve()
+{
+    root = new trieNode();
+
+    int n;
+
+    cin>>n;
+
+    for(int i=0; i<n; i++)
+    {
+        int x;
+        cin>>x;
+        if(x==1)
+        {
+            int y;
+            cin>>y;
+            Insert(y);
+        }
+        else if(x==2)
+        {
+            int y;
+            cin>>y;
+            Delete(y);
+        }
+        else
+        {
+            int a,b;
+
+            cin>>a>>b;
+
+            ll r = query(a,b);
+            cout<<r<<endl;
+        }
+    }
+}
+
+int main()
+{
+
+    fast;
+
+    int t=1;
+
+    //cin>>t;
+
+    while(t--)
+        solve();
+}

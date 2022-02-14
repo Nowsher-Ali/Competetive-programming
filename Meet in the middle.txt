@@ -1,0 +1,96 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e9
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define endl             "\n"
+#define pi               2*acos(0.0)
+
+vector<ll> calcsubarray(ll a[], int n, int c)
+{
+    vector<ll>v;
+    for (int i=0; i<(1<<n); i++)
+    {
+        ll s = 0;
+        for (int j=0; j<n; j++)
+            if (i & (1<<j))
+                s += a[j+c];
+        v.pb(s);
+    }
+    return v;
+}
+
+
+ll solveSubsetSum(ll a[], int n, ll S)
+{
+    vector<ll>X = calcsubarray(a, n/2, 0);
+    vector<ll>Y = calcsubarray(a, n-n/2, n/2);
+
+    int size_X = X.size();
+    int size_Y = Y.size();
+
+    all(Y);
+
+    ll mv = 0;
+
+    for (int i=0; i<size_X; i++)
+    {
+        if (X[i] <= S)
+        {
+            int p = lower_bound(Y.begin(), Y.end(), S-X[i])-Y.begin();
+
+            if (p == size_Y || Y[p] != (S-X[i]))
+                p--;
+            mv=max(mv, Y[p]+X[i]);
+        }
+    }
+    return mv;
+}
+
+void solve()
+{
+    int n;
+
+    cin>>n;
+
+    ll a[n+2];
+
+    for(int i=0;i<n;i++)
+        cin>>a[i];
+    ll s;
+    cin>>s;
+
+    ll ans = solveSubsetSum(a, n, s);
+    cout<<ans<<endl;
+
+}
+
+int main()
+{
+
+    fast;
+
+    int t;
+
+    cin>>t;
+
+    while(t--)
+        solve();
+}
+

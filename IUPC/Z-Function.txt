@@ -1,0 +1,167 @@
+#include<bits/stdc++.h>
+#include<stdio.h>
+using namespace std;
+ 
+#define ll               long long
+#define ull              unsigned long long
+#define pll              pair <long long,long long>
+#define IM               INT_MAX
+#define Im               INT_MIN
+#define fast             ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0)
+#define read             freopen("input.txt", "r", stdin)
+#define write            freopen("output.txt", "w", stdout)
+#define pb               push_back
+#define all(v)           sort(v.begin(),v.end())
+#define rall(v)          sort(v.rbegin(),v.rend())
+#define rev(v)           reverse(v.begin(),v.end())
+#define ff               first
+#define ss               second
+#define MOD              1000000007
+#define lcm(a, b)        ((a)*((b)/__gcd(a,b)))
+#define INF              1e12
+#define mem(a, b)        memset(a, b, sizeof(a))
+#define POPCOUNT         __builtin_popcountll
+#define endl             "\n"
+#define pi               2*acos(0.0)
+ 
+pair<ll,ll> Hash[100002];
+pair<ll,ll> inv[100002];
+pair<ll,ll> mod = {1000000007, 1000000009};
+pair<ll,ll> base = {137, 281};
+ 
+ll power(ll a, ll n, ll m)
+{
+    ll result = 1;
+ 
+    while(n)
+    {
+        if(n & 1) result = (result * a) % m;
+ 
+        n >>= 1;
+        a = (a * a) % m;
+    }
+ 
+    return result;
+}
+ 
+ 
+void precal(string input_string)
+{
+    ll p_power1 = 1;
+    ll p_power2 = 1;
+ 
+    inv[0].ff = 1;
+    inv[0].ss = 1;
+ 
+    Hash[0].ff = (input_string[0] - 'A' + 1);
+    Hash[0].ss = (input_string[0] - 'A' + 1);
+ 
+    int sz = input_string.size();
+ 
+    for(int i=1; i<sz; i++)
+    {
+        char ch = input_string[i];
+ 
+        p_power1 = (p_power1 * base.ff) % mod.ff;
+        p_power2 = (p_power2 * base.ss) % mod.ss;
+ 
+        inv[i].ff = power(p_power1, mod.ff - 2, mod.ff);
+        inv[i].ss = power(p_power2, mod.ss - 2, mod.ss);
+ 
+        Hash[i].ff = (Hash[i-1].ff + (ch - 'A' + 1)*p_power1) % mod.ff;
+        Hash[i].ss = (Hash[i-1].ss + (ch - 'A' + 1)*p_power2) % mod.ss;
+    }
+}
+ 
+ 
+pair<ll,ll> substringHash(int L, int R)
+{
+    pair<ll,ll> result = Hash[R];
+ 
+    if(L > 0)
+    {
+        result.ff = (result.ff - Hash[L-1].ff + mod.ff) % mod.ff;
+        result.ss = (result.ss - Hash[L-1].ss + mod.ss) % mod.ss;
+    }
+ 
+    result.ff = (result.ff * inv[L].ff) % mod.ff;
+    result.ss = (result.ss * inv[L].ss) % mod.ss;
+ 
+    return result;
+}
+ 
+vector<int> Zfun(string s)
+{
+    int n = (int) s.length();
+    vector<int> z(n);
+    for (int i = 1, l = 0, r = 0; i < n; ++i)
+    {
+        if (i <= r)
+            z[i] = min (r - i + 1, z[i - l]);
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]])
+            ++z[i];
+        if (i + z[i] - 1 > r)
+            l = i, r = i + z[i] - 1;
+    }
+    return z;
+}
+ 
+void solve()
+{
+    string c;
+ 
+    cin>>c;
+ 
+    precal(c);
+    vector<int>v = Zfun(c);
+    vector<int>v1 = v;
+ 
+    int n = c.size();
+ 
+    all(v1);
+ 
+    vector<pair<ll,ll> >ans;
+ 
+    for(int i=0; i<n; i++)
+    {
+        pair<ll,ll>pre = substringHash(0,i);
+        pair<ll,ll>suff = substringHash(n-i-1,n-1);
+        if(pre.ff == suff.ff && pre.ss==suff.ss)
+        {
+            int l=0,h=n-1,mid;
+ 
+            while(l<=h)
+            {
+                mid=(l+h)/2;
+                if(v1[mid]>=i+1)
+                    h = mid-1;
+                else
+                    l = mid+1;
+            }
+ 
+            h++;
+            ans.pb({i+1, n-h+1});
+        }
+    }
+ 
+    int sz = ans.size();
+ 
+    cout<<sz<<endl;
+ 
+    for(int i=0; i<sz; i++)
+        cout<<ans[i].ff<<" "<<ans[i].ss<<endl;
+}
+ 
+ 
+int main()
+{
+ 
+    fast;
+ 
+    int t=1;
+ 
+    //cin>>t;
+ 
+    while(t--)
+        solve();
+}

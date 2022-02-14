@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
- 
+
 #define ll               long long
 #define ull              unsigned long long
 #define pll              pair <long long,long long>
@@ -21,16 +21,38 @@ using namespace std;
 #define mem(a, b)        memset(a, b, sizeof(a))
 #define endl             "\n"
 #define pi               2*acos(0.0)
- 
-const int mx=200002;
- 
-ll arr[mx],seg[4*mx],lazy[4*mx];
- 
+
+const int mx = 200002;
+int n,q;
+vector<int>g[mx];
+bool vis[mx];
+int st[mx], en[mx], ft[2*mx];
+ll seg[8*mx],lazy[8*mx];
+int tim = 1;
+
+void dfs(int node)
+{
+    vis[node] = 1;
+    st[node] = tim;
+    ft[tim] = node;
+    tim++;
+
+    for(int child: g[node])
+    {
+        if(!vis[child])
+            dfs(child);
+    }
+
+    en[node] = tim;
+    ft[tim] = node;
+    tim++;
+}
+
 void build(int ind,int low,int high)
 {
     if(low==high)
     {
-        seg[ind]=arr[low];
+        seg[ind]=ft[low];
         return;
     }
     int mid=(low+high)/2;
@@ -38,12 +60,12 @@ void build(int ind,int low,int high)
     build(2*ind+2,mid+1,high);
     seg[ind]=seg[2*ind+1]+seg[2*ind+2]; //stores sum of left and right child
 }
- 
+
 ll GetSum(int ind,int low,int high,int l,int r)
 {
     if(low>=l && high<=r)
         return seg[ind];
- 
+
     if(high<l || low>r)
         return 0;
     int mid=(low+high)/2;
@@ -52,37 +74,11 @@ ll GetSum(int ind,int low,int high,int l,int r)
     return left+right;
 }
 
-ll GetMin(int ind,int low,int high,int l,int r)
-{
-    if(low>=l && high<=r)
-        return seg[ind];
- 
-    if(high<l || low>r)
-        return IM;
-    int mid=(low+high)/2;
-    ll left=GetMin(2*ind+1,low,mid,l,r);
-    ll right=GetMin(2*ind+2,mid+1,high,l,r);
-    return min(left, right);
-}
-
-ll GetMax(int ind,int low,int high,int l,int r)
-{
-    if(low>=l && high<=r)
-        return seg[ind];
- 
-    if(high<l || low>r)
-        return Im;
-    int mid=(low+high)/2;
-    ll left=GetMax(2*ind+1,low,mid,l,r);
-    ll right=GetMax(2*ind+2,mid+1,high,l,r);
-    return max(left, right);
-}
- 
 void pointUpdate(int ind, int low,int high, int node, int val)
 {
     if(low==high)
     {
-        arr[node]=val;
+        ft[node]=val;
         seg[ind]=val;
     }
     else
@@ -95,42 +91,71 @@ void pointUpdate(int ind, int low,int high, int node, int val)
         seg[ind] = seg[2*ind+1] + seg[2*ind+2];
     }
 }
- 
+
 void solve()
 {
- 
-    int n,q;
- 
     cin>>n>>q;
- 
-    for(int i=1;i<=n;i++)
-        cin>>arr[i];
-    build(1,1,n);
+
+    vector<ll>v;
+
+    for(int i=0; i<n; i++)
+    {
+        ll x;
+        cin>>x;
+        v.pb(x);
+    }
+
+    for(int i=0; i<n-1; i++)
+    {
+        int x,y;
+        cin>>x>>y;
+        g[x].pb(y);
+        g[y].pb(x);
+    }
+
+    dfs(1);
+
+    for(int i=1; i<tim; i++)
+    {
+        ft[i] = v[ft[i]-1];
+        //cout<<ft[i]<<" ";
+    }
+    //cout<<endl;
+
+    build(1,1,2*n);
+
     while(q--)
     {
-        int a,b,c;
-        cin>>a>>b>>c;
+        int a,b;
+        cin>>a>>b;
+
         if(a==1)
         {
-            pointUpdate(1,1,n,b,c);
+            int c;
+            cin>>c;
+            pointUpdate(1,1,2*n,st[b],c);
+            pointUpdate(1,1,2*n,en[b],c);
         }
         else
         {
-            cout<<query(1,1,n,b,c)<<endl;
+            //cout<<st[b]<<" "<<en[b]<<endl;
+            cout<<GetSum(1,1,2*n,st[b],en[b])/2<<endl;
         }
     }
+
 }
- 
- 
+
+
 int main()
 {
- 
+
     fast;
- 
+
     int t=1;
- 
+
     //cin>>t;
- 
+
     while(t--)
         solve();
 }
+
